@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-# DZI pyramid raw tiles (333MB, excluded for clean GitHub push)
-public/ortho_files/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

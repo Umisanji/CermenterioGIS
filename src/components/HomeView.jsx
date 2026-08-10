@@ -81,7 +81,7 @@ export default function HomeView() {
       <footer className="coatza-footer">
         <div className="footer-content">
           <p>© 2026 H. Ayuntamiento de Coatzacoalcos, Veracruz. Todos los derechos reservados.</p>
-          <p className="footer-sub">Servicio Social — Plataforma de Gestión Inteligente de Cementerios</p>
+          <p className="footer-sub">Plataforma de Gestión Inteligente de Cementerios</p>
         </div>
       </footer>
 
