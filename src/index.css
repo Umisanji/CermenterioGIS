@@ -1,0 +1,585 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --coatza-maroon: #7A1C2E;
+  --coatza-maroon-dark: #581220;
+  --coatza-gold: #C49A45;
+  --coatza-gold-dark: #8B5E34;
+  --bg-light: #ffffff;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --border-light: rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body, html, #root, .app-root {
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  color: var(--text-dark);
+}
+
+/* ==========================================================================
+   COATZACOALCOS OFFICIAL HEADER & NAVBAR (FULLY RESPONSIVE)
+   ========================================================================== */
+
+.coatza-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 32px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.descanso-logo-img {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+.descanso-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.descanso-text .title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--coatza-gold-dark);
+  letter-spacing: -0.2px;
+}
+
+.descanso-text .subtitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--coatza-gold-dark);
+}
+
+.vertical-divider {
+  width: 1px;
+  height: 38px;
+  background: #cbd5e1;
+  margin: 0 4px;
+}
+
+.govt-logo-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+.motif-logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* NAVIGATION ITEMS - FULL RIGHT ALIGNMENT */
+.nav-menu.full-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.nav-item {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #334155;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: var(--coatza-maroon);
+  background: rgba(122, 28, 46, 0.06);
+}
+
+/* DROPDOWN MENU */
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  padding: 8px;
+  z-index: 1200;
+}
+
+.dropdown-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.dropdown-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #334155;
+  transition: background 0.15s;
+}
+
+.dropdown-item:hover {
+  background: rgba(122, 28, 46, 0.08);
+  color: var(--coatza-maroon);
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+}
+
+/* DECORATIVE STRIP */
+.header-bottom-strip {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gold-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--coatza-gold-dark), var(--coatza-gold), var(--coatza-gold-dark));
+}
+
+.red-strip {
+  height: 4px;
+  background: var(--coatza-maroon);
+}
+
+/* ==========================================================================
+   HOME VIEW STYLES
+   ========================================================================== */
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 65px);
+}
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 540px;
+  background-image: url('/Escolleras2.jpeg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 100%);
+}
+
+.hero-content-box.full-width-box.semi-transparent {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  background: rgba(18, 26, 38, 0.45);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  padding: 44px 64px;
+  color: #ffffff;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+
+.hero-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.hero-description {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #e2e8f0;
+  max-width: 1100px;
+}
+
+/* ABOUT SECTION */
+.about-section {
+  position: relative;
+  background-color: var(--coatza-maroon);
+  color: #ffffff;
+  padding: 60px 24px;
+}
+
+.about-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 40px;
+  align-items: center;
+}
+
+.about-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.about-description {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.92;
+  margin-bottom: 28px;
+}
+
+.about-highlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.highlight-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.highlight-icon {
+  color: var(--coatza-gold);
+}
+
+.highlight-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+.highlight-card p { font-size: 0.8rem; opacity: 0.8; }
+
+.about-image-box {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.inset-photo {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.image-caption {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #cbd5e1;
+}
+
+.coatza-footer {
+  background: var(--coatza-maroon-dark);
+  color: #94a3b8;
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+.footer-sub { font-size: 0.75rem; margin-top: 4px; opacity: 0.7; }
+
+/* ==========================================================================
+   DEDICATED FULL-PAGE VIEWER PAGE STYLES
+   ========================================================================== */
+
+.viewer-standalone-page {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff !important;
+}
+
+.viewer-dedicated-header {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.viewer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.viewer-logo-img {
+  height: 42px;
+  width: auto;
+}
+
+.viewer-title-box h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.viewer-header-right-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.viewer-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.v-btn-icon {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.v-btn-icon:hover {
+  background: var(--coatza-maroon);
+  color: #ffffff;
+  border-color: var(--coatza-maroon);
+}
+
+.v-zoom-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  min-width: 80px;
+  text-align: center;
+}
+
+.v-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.v-btn-home {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--coatza-maroon);
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 12px rgba(122, 28, 46, 0.2);
+}
+
+.viewer-standalone-canvas,
+#openseadragon-viewer,
+.openseadragon-container {
+  flex: 1;
+  width: 100%;
+  height: calc(100vh - 64px);
+  background: #ffffff !important;
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE MEDIA QUERIES (100% ADAPTATIVE)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .header-top-row {
+    padding: 8px 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .descanso-logo-img {
+    height: 36px;
+  }
+
+  .descanso-text .title, .descanso-text .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .govt-logo-img {
+    height: 34px;
+  }
+
+  .vertical-divider {
+    height: 28px;
+    margin: 0 2px;
+  }
+
+  .nav-menu.full-right {
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .nav-item {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+
+  .dropdown-menu {
+    width: 260px;
+    right: 0;
+  }
+
+  .hero-banner {
+    height: auto;
+    min-height: 420px;
+  }
+
+  .hero-content-box.full-width-box.semi-transparent {
+    padding: 28px 18px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-description {
+    font-size: 0.92rem;
+  }
+
+  .about-section {
+    padding: 40px 16px;
+  }
+
+  .about-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .about-title {
+    font-size: 1.7rem;
+  }
+
+  .about-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  /* DEDICATED VIEWER HEADER RESPONSIVE */
+  .viewer-dedicated-header {
+    padding: 8px 12px;
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .viewer-logo-img {
+    height: 32px;
+  }
+
+  .viewer-title-box h2 {
+    font-size: 0.9rem;
+  }
+
+  .viewer-header-right-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .v-btn-secondary span, .v-btn-home span {
+    display: none; /* Hide label text on narrow mobile screens, keeping clean icons */
+  }
+
+  .v-btn-secondary, .v-btn-home {
+    padding: 6px 10px;
+  }
+}
