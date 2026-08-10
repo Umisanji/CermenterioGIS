@@ -19,7 +19,10 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-body, html, #root, .app-root {
+body,
+html,
+#root,
+.app-root {
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
@@ -34,7 +37,7 @@ body, html, #root, .app-root {
 .coatza-header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-light);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -123,7 +126,8 @@ body, html, #root, .app-root {
   transition: all 0.2s;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover,
+.nav-item.active {
   color: var(--coatza-maroon);
   background: rgba(122, 28, 46, 0.06);
 }
@@ -139,7 +143,7 @@ body, html, #root, .app-root {
   right: 0;
   width: 320px;
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   box-shadow: var(--shadow-lg);
   padding: 8px;
@@ -232,7 +236,7 @@ body, html, #root, .app-root {
 .hero-bg-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
 }
 
 .hero-content-box.full-width-box.semi-transparent {
@@ -247,7 +251,7 @@ body, html, #root, .app-root {
   border-radius: 0;
   padding: 44px 64px;
   color: #ffffff;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
 }
 
 .hero-title {
@@ -314,13 +318,21 @@ body, html, #root, .app-root {
   color: var(--coatza-gold);
 }
 
-.highlight-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
-.highlight-card p { font-size: 0.8rem; opacity: 0.8; }
+.highlight-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.highlight-card p {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
 
 .about-image-box {
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
   border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -345,7 +357,12 @@ body, html, #root, .app-root {
   text-align: center;
   font-size: 0.85rem;
 }
-.footer-sub { font-size: 0.75rem; margin-top: 4px; opacity: 0.7; }
+
+.footer-sub {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  opacity: 0.7;
+}
 
 /* ==========================================================================
    DEDICATED FULL-PAGE VIEWER PAGE STYLES
@@ -363,7 +380,7 @@ body, html, #root, .app-root {
   height: 64px;
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -403,7 +420,7 @@ body, html, #root, .app-root {
   border: 1px solid #cbd5e1;
   padding: 4px 10px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .v-btn-icon {
@@ -419,6 +436,7 @@ body, html, #root, .app-root {
   cursor: pointer;
   transition: all 0.15s;
 }
+
 .v-btn-icon:hover {
   background: var(--coatza-maroon);
   color: #ffffff;
@@ -446,7 +464,7 @@ body, html, #root, .app-root {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .v-btn-home {
@@ -489,7 +507,8 @@ body, html, #root, .app-root {
     height: 36px;
   }
 
-  .descanso-text .title, .descanso-text .subtitle {
+  .descanso-text .title,
+  .descanso-text .subtitle {
     font-size: 0.95rem;
   }
 
@@ -575,11 +594,36 @@ body, html, #root, .app-root {
     gap: 6px;
   }
 
-  .v-btn-secondary span, .v-btn-home span {
-    display: none; /* Hide label text on narrow mobile screens, keeping clean icons */
+  .v-btn-secondary span,
+  .v-btn-home span {
+    display: none;
+    /* Hide label text on narrow mobile screens, keeping clean icons */
   }
 
-  .v-btn-secondary, .v-btn-home {
+  .v-btn-secondary,
+  .v-btn-home {
     padding: 6px 10px;
   }
+}
+
+.map-ctrl-btn {
+  transition: background-color 0.15s ease, transform 0.15s ease, color 0.15s ease;
+  outline: none;
+}
+
+.map-ctrl-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.map-ctrl-btn:active {
+  transform: scale(0.92);
+}
+
+.center-btn:hover {
+  transform: scale(1.05);
+}
+
+.center-btn:active {
+  transform: scale(0.92);
 }

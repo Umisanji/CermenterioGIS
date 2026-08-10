@@ -4,7 +4,7 @@ import OrthoViewer from './OrthoViewer';
 import SimpleMapView from './SimpleMapView';
 
 export default function ViewerPage({ onGoHome, selectedCemetery }) {
-  const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'simple' (Google Maps)
+  const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'simple' (Plano Vectorial)
   const [zoomPct, setZoomPct] = useState(100);
 
   const orthoViewerRef = useRef(null);
@@ -33,7 +33,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.goHome(true);
     } else if (mapMode === 'simple' && simpleMapRef.current) {
-      simpleMapRef.current.setView([18.1432, -94.5365], 17);
+      simpleMapRef.current.setView();
     }
   };
 
@@ -110,7 +110,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
           }}
         >
           <Layers size={16} />
-          <span>Vista Simple (Google Maps)</span>
+          <span>Vista Vectorial Simple (Plano)</span>
         </button>
       </div>
 

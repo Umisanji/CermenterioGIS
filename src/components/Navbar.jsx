@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, User, Home } from 'lucide-react';
+import { ChevronDown, User } from 'lucide-react';
 
 export default function Navbar({ onSelectCemetery, onGoHome }) {
   const [showCemeteriesDropdown, setShowCemeteriesDropdown] = useState(false);
@@ -16,12 +16,12 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
   return (
     <header className="coatza-header">
       <div className="header-top-row">
-        {/* LOGOS BRAND GROUP ON LEFT */}
+        {/* LOGOS BRAND GROUP ON LEFT - CLICKS TO GO HOME */}
         <div 
           className="brand-group"
           onClick={onGoHome}
           style={{ cursor: 'pointer' }}
-          title="Ir a Inicio"
+          title="Regresar a Inicio — Descanso Digno"
         >
           {/* LOGO DESCANSO DIGNO IMAGE */}
           <img 
@@ -48,15 +48,6 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
 
         {/* RIGHT NAVIGATION ITEMS ALIGNED FULL RIGHT */}
         <nav className="nav-menu full-right">
-          {/* BOTÓN INICIO */}
-          <button 
-            className="nav-item"
-            onClick={onGoHome}
-          >
-            <Home size={18} />
-            <span>Inicio</span>
-          </button>
-
           {/* CEMENTERIOS DROPDOWN */}
           <div className="dropdown-wrapper">
             <button 
