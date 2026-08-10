@@ -18,11 +18,14 @@ export default function App() {
 
   return (
     <div className="app-root">
+      {/* OFFICIAL COATZA NAVBAR HEADER ALWAYS VISIBLE ON TOP */}
+      <Navbar 
+        onSelectCemetery={handleSelectCemetery} 
+        onGoHome={handleGoHome}
+      />
+
       {currentView === 'home' ? (
-        <>
-          <Navbar onSelectCemetery={handleSelectCemetery} />
-          <HomeView onOpenCemetery={handleSelectCemetery} />
-        </>
+        <HomeView onOpenCemetery={handleSelectCemetery} />
       ) : (
         <ViewerPage 
           onGoHome={handleGoHome}

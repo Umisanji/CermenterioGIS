@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, User } from 'lucide-react';
+import { ChevronDown, User, Home } from 'lucide-react';
 
-export default function Navbar({ onSelectCemetery }) {
+export default function Navbar({ onSelectCemetery, onGoHome }) {
   const [showCemeteriesDropdown, setShowCemeteriesDropdown] = useState(false);
   const [showTramitesDropdown, setShowTramitesDropdown] = useState(false);
 
@@ -16,16 +16,21 @@ export default function Navbar({ onSelectCemetery }) {
   return (
     <header className="coatza-header">
       <div className="header-top-row">
-        {/* LOGOS  */}
-        <div className="brand-group">
-          {/* LOGO DESCANSO DIGNO */}
-          <img
-            src="/Logodescansodigno.png"
-            alt="Logo Descanso Digno"
+        {/* LOGOS BRAND GROUP ON LEFT */}
+        <div 
+          className="brand-group"
+          onClick={onGoHome}
+          style={{ cursor: 'pointer' }}
+          title="Ir a Inicio"
+        >
+          {/* LOGO DESCANSO DIGNO IMAGE */}
+          <img 
+            src="/Logodescansodigno.png" 
+            alt="Logo Descanso Digno" 
             className="descanso-logo-img"
           />
 
-          {/* DESCANSO DIGNO TEXTo */}
+          {/* DESCANSO DIGNO TEXT */}
           <div className="descanso-text">
             <span className="title">Descanso</span>
             <span className="subtitle">Digno</span>
@@ -33,19 +38,28 @@ export default function Navbar({ onSelectCemetery }) {
 
           <div className="vertical-divider"></div>
 
-          {/* OFFICIAL COATZA LOGO */}
-          <img
-            src="/Logo-Coatza-26.png"
-            alt="Gobierno Coatzacoalcos 2026-2029"
+          {/* OFFICIAL COATZA GOVT LOGO */}
+          <img 
+            src="/Logo-Coatza-26.png" 
+            alt="Gobierno Coatzacoalcos 2026-2029" 
             className="govt-logo-img"
           />
         </div>
 
-        {/* navegacion */}
+        {/* RIGHT NAVIGATION ITEMS ALIGNED FULL RIGHT */}
         <nav className="nav-menu full-right">
-          {/* CEMENTERIOS  */}
+          {/* BOTÓN INICIO */}
+          <button 
+            className="nav-item"
+            onClick={onGoHome}
+          >
+            <Home size={18} />
+            <span>Inicio</span>
+          </button>
+
+          {/* CEMENTERIOS DROPDOWN */}
           <div className="dropdown-wrapper">
-            <button
+            <button 
               className={`nav-item dropdown-btn ${showCemeteriesDropdown ? 'active' : ''}`}
               onClick={() => {
                 setShowCemeteriesDropdown(!showCemeteriesDropdown);
@@ -60,7 +74,7 @@ export default function Navbar({ onSelectCemetery }) {
               <div className="dropdown-menu">
                 <div className="dropdown-header">Selecciona un Cementerio:</div>
                 {cemeteriesList.map((cem) => (
-                  <div
+                  <div 
                     key={cem.id}
                     className="dropdown-item"
                     onClick={() => {
@@ -75,9 +89,9 @@ export default function Navbar({ onSelectCemetery }) {
             )}
           </div>
 
-          {/* TRAMITES  */}
+          {/* TRAMITES DROPDOWN */}
           <div className="dropdown-wrapper">
-            <button
+            <button 
               className="nav-item dropdown-btn"
               onClick={() => {
                 setShowTramitesDropdown(!showTramitesDropdown);
@@ -108,7 +122,7 @@ export default function Navbar({ onSelectCemetery }) {
         </nav>
       </div>
 
-      {/* franja decorativa */}
+      {/* DECORATIVE STRIP */}
       <div className="header-bottom-strip">
         <div className="gold-bar"></div>
         <div className="red-strip"></div>
