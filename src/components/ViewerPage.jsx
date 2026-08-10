@@ -33,7 +33,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.goHome(true);
     } else if (mapMode === 'simple' && simpleMapRef.current) {
-      simpleMapRef.current.setView([18.1405, -94.5192], 17);
+      simpleMapRef.current.setView([18.1432, -94.5365], 17);
     }
   };
 
