@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Plus, Minus, Maximize2, Layers, MapPin, Eye } from 'lucide-react';
+import { Plus, Minus, Maximize2, Layers, Eye } from 'lucide-react';
 import OrthoViewer from './OrthoViewer';
 import SimpleMapView from './SimpleMapView';
 
@@ -74,7 +74,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
           onClick={() => setMapMode('ortho')}
           style={{
             display: 'flex',
-            align-items: 'center',
+            alignItems: 'center',
             gap: '8px',
             padding: '8px 16px',
             borderRadius: '24px',
@@ -96,7 +96,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
           onClick={() => setMapMode('simple')}
           style={{
             display: 'flex',
-            align-items: 'center',
+            alignItems: 'center',
             gap: '8px',
             padding: '8px 16px',
             borderRadius: '24px',
