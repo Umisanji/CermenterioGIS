@@ -2,10 +2,12 @@ import React, { useState, useRef } from 'react';
 import { Plus, Minus, Maximize2, Layers, Eye } from 'lucide-react';
 import OrthoViewer from './OrthoViewer';
 import SimpleMapView from './SimpleMapView';
+import TumbaModal from './TumbaModal';
 
 export default function ViewerPage({ onGoHome, selectedCemetery }) {
   const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'simple' (Plano Vectorial)
   const [zoomPct, setZoomPct] = useState(100);
+  const [selectedTumba, setSelectedTumba] = useState(null);
 
   const orthoViewerRef = useRef(null);
   const simpleMapRef = useRef(null);
@@ -51,9 +53,18 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
           <SimpleMapView 
             onZoomChange={setZoomPct}
             setMapRef={(inst) => { simpleMapRef.current = inst; }}
+            onSelectTumba={(tumba) => setSelectedTumba(tumba)}
           />
         )}
       </main>
+
+      {/* CADASTRAL DATA MODAL FOR SELECTED TOMB */}
+      {selectedTumba && (
+        <TumbaModal 
+          tumba={selectedTumba} 
+          onClose={() => setSelectedTumba(null)} 
+        />
+      )}
 
       {/* FLOATING MAP LAYER SWITCHER TOGGLE (BOTTOM LEFT CORNER) */}
       <div className="floating-layer-switcher" style={{
@@ -132,13 +143,13 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
       }}>
         {/* ZOOM - / + BUTTONS */}
         <div className="viewer-zoom-controls" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button className="v-btn-icon" onClick={handleZoomOut} title="Alejar (-)">
+          <button className="v-btn-icon map-ctrl-btn" onClick={handleZoomOut} title="Alejar (-)">
             <Minus size={16} />
           </button>
           <span className="v-zoom-text" style={{ fontSize: '0.82rem', fontWeight: '700', minWidth: '70px', textAlign: 'center', color: '#334155' }}>
             {zoomPct}%
           </span>
-          <button className="v-btn-icon" onClick={handleZoomIn} title="Acercar (+)">
+          <button className="v-btn-icon map-ctrl-btn" onClick={handleZoomIn} title="Acercar (+)">
             <Plus size={16} />
           </button>
         </div>
@@ -146,7 +157,7 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
         <div style={{ width: '1px', height: '24px', background: '#cbd5e1' }}></div>
 
         {/* CENTRAR VISTA BUTTON */}
-        <button className="v-btn-secondary" onClick={handleResetView} title="Restablecer Encuadre">
+        <button className="v-btn-secondary center-btn" onClick={handleResetView} title="Restablecer Encuadre">
           <Maximize2 size={15} />
           <span>Centrar Vista</span>
         </button>

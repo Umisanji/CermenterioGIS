@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-export default function SimpleMapView({ onZoomChange, setMapRef }) {
+export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }) {
   const [scale, setScale] = useState(1.0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -8,8 +8,47 @@ export default function SimpleMapView({ onZoomChange, setMapRef }) {
 
   const containerRef = useRef(null);
 
+  // GeoJSON data loaded from QGIS export
+  const tumba1 = {
+    type: 'Feature',
+    properties: {
+      fid: 1,
+      seccion: 'A',
+      lote: '3252',
+      propietario: 'LUIS MIGUEL DE LA CRUZ GONZALEZ',
+      difunto: 'MIGUEL ANGEL DE LA CRUZ MARTINEZ',
+      fechaDifuncion: '2019-01-04',
+      telefono: '9212392318',
+      direccionTitular: 'C TIBURON 25 FRACC PUERTO ESMERALDA EN CTZ, VER',
+      vigenciaPerpetuidad: '2033-01-26',
+      folio: '251',
+      recibo: 'E 046496',
+      tipoTramite: 'PERPETUIDAD ENE26',
+      observacion: 'BOVEDA FORRADA DE AZULEJO COLOR AZUL CON NICHO, PAR DE FLOREROS Y LIBRO'
+    }
+  };
+
+  const tumba2 = {
+    type: 'Feature',
+    properties: {
+      fid: 2,
+      seccion: 'A',
+      lote: '3254',
+      propietario: 'GERARDO JUAREZ CRUZ',
+      difunto: 'FRANCISCA CRUZ AGUILAR',
+      fechaDifuncion: '2019-01-07',
+      telefono: '9211384949',
+      direccionTitular: 'AV GAVIOTAS 121 COL SANTA ISABEL III COATZA.,VER',
+      vigenciaPerpetuidad: '2033-03-21',
+      folio: '925',
+      recibo: 'SIN RECIBO',
+      tipoTramite: 'PERPETUIDAD ABR26',
+      observacion: 'BOVEDA CON MONUMENTO DE AZULEJO COLOR AZUL'
+    }
+  };
+
   // Expose control methods to parent via ref
-  React.useEffect(() => {
+  useEffect(() => {
     if (setMapRef) {
       setMapRef({
         zoomIn: () => handleZoomDelta(0.2),
@@ -83,7 +122,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef }) {
           transition: isDragging ? 'none' : 'transform 0.15s ease-out',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justify-content: 'center'
         }}
       >
         <svg 
@@ -109,9 +148,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef }) {
           {/* MAIN ROAD: Carr. A Barrillas (Top Horizontal Strip) */}
           <g id="road-barrillas">
             <rect x="0" y="20" width="1000" height="45" fill="#b0bec5" />
-            {/* Lane dividers */}
             <line x1="0" y1="42.5" x2="1000" y2="42.5" stroke="#ffffff" strokeWidth="2" strokeDasharray="12 8" />
-            {/* Road Text Label */}
             <text x="540" y="48" fill="#1e293b" fontSize="18" fontWeight="800" letterSpacing="0.5">
               Carr. A Barrillas  ➜  ➜
             </text>
@@ -129,15 +166,8 @@ export default function SimpleMapView({ onZoomChange, setMapRef }) {
             </text>
           </g>
 
-          {/* EXACT PANTEÓN LOMAS DE BARRILLAS POLYGON (MATCHING PROTOTYPE SCREENSHOT) */}
+          {/* EXACT PANTEÓN LOMAS DE BARRILLAS POLYGON */}
           <g id="cemetery-polygon">
-            {/* Polygon Shadow */}
-            <polygon 
-              points="140,65 830,110 790,160 845,180 770,710 300,550 80,360 160,180" 
-              fill="rgba(0,0,0,0.06)" 
-              transform="translate(4, 6)"
-            />
-            {/* Main Mint Green Vector Shape */}
             <polygon 
               points="140,65 830,110 790,160 845,180 770,710 300,550 80,360 160,180" 
               fill="url(#cemeteryPattern)" 
@@ -147,44 +177,54 @@ export default function SimpleMapView({ onZoomChange, setMapRef }) {
             />
           </g>
 
-          {/* SURROUNDING BUILDING BLOCKS (MINIMAL & CLEAN) */}
-          <rect x="680" y="85" width="30" height="18" fill="#e2e8f0" rx="3" />
-          <rect x="785" y="250" width="24" height="24" fill="#e2e8f0" rx="3" transform="rotate(12 785 250)" />
-          <rect x="800" y="520" width="35" height="50" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" rx="4" />
-
-          {/* MAIN CEMETERY MARKER PIN 1 (CENTER) */}
-          <g id="marker-primary" transform="translate(480, 360)">
-            <rect x="-140" y="-22" width="280" height="44" rx="22" fill="#ffffff" stroke="#059669" strokeWidth="2.5" filter="drop-shadow(0 6px 15px rgba(0,0,0,0.18))" />
-            <circle cx="-112" cy="0" r="14" fill="#059669" />
-            {/* Tombstone / Monument Icon */}
-            <path d="M -117 -5 C -117 -11 -107 -11 -107 -5 L -107 4 L -117 4 Z M -119 4 L -105 4 L -105 7 L -119 7 Z" fill="#ffffff" />
-            <text x="-88" y="5" fill="#065f46" fontSize="14" fontWeight="800">
-              Panteón Municipal Loma de Barrillas
+          {/* MAPPED TOMB POLYGON 1 (Lote 3252 - MIGUEL ANGEL DE LA CRUZ MARTINEZ) */}
+          <g 
+            id="tumba-3252"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onSelectTumba) onSelectTumba(tumba1);
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <polygon 
+              points="420,380 470,380 470,420 420,420" 
+              fill="rgba(122, 28, 46, 0.75)" 
+              stroke="#FACC15" 
+              strokeWidth="2.5"
+            />
+            <text x="445" y="405" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
+              3252
             </text>
           </g>
 
-          {/* SECONDARY CEMETERY MARKER PIN 2 (TOP LEFT INSET) */}
-          <g id="marker-secondary" transform="translate(240, 260)">
-            <rect x="-115" y="-18" width="230" height="36" rx="18" fill="rgba(255,255,255,0.92)" stroke="#64748b" strokeWidth="1.5" />
-            <circle cx="-92" cy="0" r="11" fill="#475569" />
-            <path d="M -96 -4 C -96 -9 -88 -9 -88 -4 L -88 3 L -96 3 Z" fill="#ffffff" />
-            <text x="-74" y="-1" fill="#334155" fontSize="11" fontWeight="700">
-              Panteón municipal "
-            </text>
-            <text x="-74" y="11" fill="#334155" fontSize="11" fontWeight="700">
-              Lomas de Barrillas"
+          {/* MAPPED TOMB POLYGON 2 (Lote 3254 - FRANCISCA CRUZ AGUILAR) */}
+          <g 
+            id="tumba-3254"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onSelectTumba) onSelectTumba(tumba2);
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <polygon 
+              points="480,380 530,380 530,420 480,420" 
+              fill="rgba(122, 28, 46, 0.75)" 
+              stroke="#FACC15" 
+              strokeWidth="2.5"
+            />
+            <text x="505" y="405" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
+              3254
             </text>
           </g>
 
-          {/* IGLESIA / LANDMARK (BOTTOM RIGHT) */}
-          <g transform="translate(850, 640)">
-            <text x="0" y="0" fill="#64748b" fontSize="12" fontWeight="700" textAnchor="middle">
-              IGLESIA ROCA DE
-            </text>
-            <text x="0" y="15" fill="#64748b" fontSize="12" fontWeight="700" textAnchor="middle">
-              SALVACIÓN TIERRA...
+          {/* INTERACTIVE MARKER BADGE FOR MAPPED TOMBS */}
+          <g transform="translate(475, 345)" style={{ cursor: 'pointer' }} onClick={() => onSelectTumba && onSelectTumba(tumba1)}>
+            <rect x="-110" y="-16" width="220" height="32" rx="16" fill="#7A1C2E" stroke="#FACC15" strokeWidth="2" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.2))" />
+            <text x="0" y="5" fill="#ffffff" fontSize="12" fontWeight="800" textAnchor="middle">
+              🪦 2 Tumbas Mapeadas (QGIS)
             </text>
           </g>
+
         </svg>
       </div>
     </div>

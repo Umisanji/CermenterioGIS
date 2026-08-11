@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "tumbas",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{"type":"Feature","properties":{"fid":1,"seccion":"A","lote":"3252","propietario":"LUIS MIGUEL DE LA CRUZ GONZALEZ","difunto":"MIGUEL ANGEL DE LA CRUZ MARTINEZ","fechaDifuncion":"2019-01-04","telefono":"9212392318","direccionTitular":"C TIBURON 25 FRACC PUERTO ESMERALDA EN CTZ, VER ","vigenciaPerpetuidad":"2033-01-26","folio":"251","recibo":"E 046496","tipoTramite":"PERPETUIDAD ENE26","observacion":"BOVEDA FORRADA DE AZULEJO COLOR AZUL CON NICHO, PAR DE FLOREROS Y LIBRO"},"geometry":{"type":"Polygon","coordinates":[[[-94.527405118600782,18.140086586203584],[-94.527397589634489,18.140091893507691],[-94.527383087117457,18.140074490487248],[-94.527389752104014,18.140069121470301],[-94.527405118600782,18.140086586203584]]]}},
+{"type":"Feature","properties":{"fid":2,"seccion":"A","lote":"3254","propietario":"GERARDO JUAREZ CRUZ","difunto":"FRANCISCA CRUZ AGUILAR","fechaDifuncion":"2019-01-07","telefono":"9211384949","direccionTitular":"AV GAVIOTAS 121 COL SANTA ISABEL III COATZA.,VER","vigenciaPerpetuidad":"2033-03-21","folio":"925","recibo":null,"tipoTramite":"PERPETUIDAD ABR26","observacion":"BOVEDA CON MONUMENTO DE AZULEJO COLOR AZUL"},"geometry":{"type":"Polygon","coordinates":[[[-94.527373152433,18.14008190372402],[-94.527365980555516,18.140087078369799],[-94.527380869010045,18.140104327189064],[-94.52738749618797,18.140099606459582],[-94.527373152433,18.14008190372402]]]}}
+]
+}
