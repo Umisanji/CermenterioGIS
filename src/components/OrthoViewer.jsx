@@ -1,84 +1,133 @@
-import React, { useEffect, useRef } from 'react';
-import OpenSeadragon from 'openseadragon';
+import React, { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-export default function OrthoViewer({ onZoomChange, setViewerRef }) {
-  const viewerContainerRef = useRef(null);
-  const viewerInstanceRef = useRef(null);
+export default function OrthoViewer({ onZoomChange, setViewerRef, onSelectTumba }) {
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const [geoData, setGeoData] = useState(null);
+
+  // Load public/tumbas.geojson
+  useEffect(() => {
+    fetch('/tumbas.geojson')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Loaded GeoJSON in OrthoViewer:', data);
+        setGeoData(data);
+      })
+      .catch((err) => console.error('Error loading tumbas.geojson:', err));
+  }, []);
 
   useEffect(() => {
-    if (!viewerContainerRef.current) return;
+    if (!mapContainerRef.current) return;
+    if (mapInstanceRef.current) return;
 
-    // Direct TileSource definition for maximum reliability
-    const viewer = OpenSeadragon({
-      element: viewerContainerRef.current,
-      prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
-      tileSources: {
-        Image: {
-          xmlns: "http://schemas.microsoft.com/deepzoom/2008",
-          Url: "/ortho_files/",
-          Format: "jpg",
-          Overlap: "0",
-          TileSize: "512",
-          Size: {
-            Width: "40291",
-            Height: "32071"
-          }
-        }
-      },
-      animationTime: 0.4,
-      blendTime: 0.1,
-      constrainDuringPan: true,
-      maxZoomPixelRatio: 3.0,
-      minZoomImageRatio: 0.8,
-      visibilityRatio: 0.9,
-      zoomPerClick: 1.5,
-      showNavigationControl: false,
-      gestureSettingsMouse: {
-        scrollToZoom: true,
-        clickToZoom: true,
-        pinchToZoom: true
-      }
+    // Exact center bounds for Panteón Lomas de Barrillas Orthophoto
+    const centerCoords = [18.14008, -94.52739];
+    const imageBounds = [
+      [18.1382, -94.5298], // SouthWest
+      [18.1420, -94.5250]  // NorthEast
+    ];
+
+    // Initialize Leaflet Map for Realistic Orthophoto + QGIS GeoJSON Vector Overlay
+    const map = L.map(mapContainerRef.current, {
+      center: centerCoords,
+      zoom: 19,
+      minZoom: 16,
+      maxZoom: 22,
+      zoomControl: false,
+      attributionControl: false
     });
 
-    viewerInstanceRef.current = viewer;
-    if (setViewerRef) setViewerRef(viewer);
-
-    // Fallback handler
-    viewer.addHandler('open-failed', () => {
-      console.warn('Fallback to web JPEG image');
-      viewer.open({
-        type: 'image',
-        url: '/ortho_seccion_a_web.jpg'
-      });
+    // High-Resolution Aerial Orthophoto ImageOverlay
+    const orthophotoLayer = L.imageOverlay('/ortho_seccion_a_web.jpg', imageBounds, {
+      opacity: 1.0,
+      interactive: true
     });
+    orthophotoLayer.addTo(map);
 
-    const handleZoom = () => {
-      if (!viewer.viewport) return;
-      const currentZoom = viewer.viewport.getZoom(true);
-      const homeZoom = viewer.viewport.getHomeZoom();
-      const pct = Math.round((currentZoom / homeZoom) * 100);
+    mapInstanceRef.current = map;
+    if (setViewerRef) setViewerRef(map);
+
+    // Zoom change listener
+    map.on('zoomend', () => {
+      const zoom = map.getZoom();
+      const pct = Math.round((zoom / 19) * 100);
       if (onZoomChange) onZoomChange(pct);
-    };
-
-    viewer.addHandler('zoom', handleZoom);
-
-    // Force redraw on resize
-    const handleResize = () => {
-      if (viewer && viewer.viewport) {
-        viewer.viewport.applyConstraints();
-      }
-    };
-    window.addEventListener('resize', handleResize);
+    });
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      viewer.destroy();
+      map.remove();
+      mapInstanceRef.current = null;
     };
   }, []);
 
+  // Add QGIS GeoJSON Polygons directly on top of the realistic orthophoto
+  useEffect(() => {
+    if (!mapInstanceRef.current || !geoData) return;
+
+    const map = mapInstanceRef.current;
+
+    // Render QGIS Polygons with glowing gold/maroon vector styling directly over the aerial photo
+    const geoJsonLayer = L.geoJSON(geoData, {
+      style: (feature) => ({
+        color: '#FACC15',       // Bright Gold Border
+        weight: 3,
+        fillColor: '#7A1C2E',   // Coatzacoalcos Maroon Fill
+        fillOpacity: 0.65
+      }),
+      onEachFeature: (feature, layer) => {
+        const props = feature.properties || {};
+        
+        // Tooltip hover label
+        layer.bindTooltip(`
+          <div style="font-family: sans-serif; padding: 2px 6px;">
+            <strong style="color: #7A1C2E;">Lote #${props.lote || ''} (Sec. ${props.seccion || 'A'})</strong><br/>
+            <span>🪦 ${props.difunto || 'Registro Fosa'}</span>
+          </div>
+        `, { sticky: true, direction: 'top' });
+
+        // Hover highlight effects
+        layer.on({
+          mouseover: (e) => {
+            const l = e.target;
+            l.setStyle({
+              weight: 4,
+              color: '#ffffff',
+              fillOpacity: 0.85
+            });
+          },
+          mouseout: (e) => {
+            geoJsonLayer.resetStyle(e.target);
+          },
+          click: (e) => {
+            L.DomEvent.stopPropagation(e);
+            if (onSelectTumba) onSelectTumba(feature);
+          }
+        });
+      }
+    });
+
+    geoJsonLayer.addTo(map);
+    
+    // Fit map bounds to the QGIS mapped tombs if available
+    try {
+      const bounds = geoJsonLayer.getBounds();
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [100, 100], maxZoom: 20 });
+      }
+    } catch (e) {
+      console.warn('Could not fit bounds:', e);
+    }
+
+    return () => {
+      map.removeLayer(geoJsonLayer);
+    };
+  }, [geoData, onSelectTumba]);
+
   return (
     <div 
-      ref={viewerContainerRef} 
+      ref={mapContainerRef} 
       className="w-full h-full bg-white overflow-hidden" 
       style={{ 
         width: '100%', 

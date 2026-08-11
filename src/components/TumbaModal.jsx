@@ -7,7 +7,7 @@ export default function TumbaModal({ tumba, onClose }) {
   const props = tumba.properties || {};
 
   return (
-    <div 
+    <div
       className="modal-backdrop"
       onClick={onClose}
       style={{
@@ -22,7 +22,7 @@ export default function TumbaModal({ tumba, onClose }) {
         padding: '16px'
       }}
     >
-      <div 
+      <div
         className="modal-card"
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -42,7 +42,7 @@ export default function TumbaModal({ tumba, onClose }) {
           padding: '20px 24px',
           position: 'relative'
         }}>
-          <button 
+          <button
             onClick={onClose}
             style={{
               position: 'absolute',
@@ -56,7 +56,7 @@ export default function TumbaModal({ tumba, onClose }) {
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
-              justify-content: 'center',
+              justifyContent: 'center',
               cursor: 'pointer'
             }}
           >
@@ -87,7 +87,7 @@ export default function TumbaModal({ tumba, onClose }) {
 
         {/* BODY DETAILS */}
         <div style={{ padding: '24px', maxHeight: '75vh', overflowY: 'auto' }}>
-          
+
           {/* TOP GRID STATS */}
           <div style={{
             display: 'grid',
@@ -115,7 +115,7 @@ export default function TumbaModal({ tumba, onClose }) {
 
           {/* DETAIL ROWS */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            
+
             {/* DEFUNCIÓN */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
               <div style={{ padding: '8px', background: 'rgba(122, 28, 46, 0.08)', borderRadius: '8px', color: '#7A1C2E' }}>
@@ -203,13 +203,13 @@ export default function TumbaModal({ tumba, onClose }) {
           borderTop: '1px solid #e2e8f0',
           padding: '14px 24px',
           display: 'flex',
-          justify-content: 'space-between',
-          align-items: 'center'
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
           <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
             H. Ayuntamiento de Coatzacoalcos — Catastro de Cementerios
           </span>
-          <button 
+          <button
             onClick={onClose}
             style={{
               background: '#7A1C2E',
@@ -227,6 +227,6 @@ export default function TumbaModal({ tumba, onClose }) {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 }

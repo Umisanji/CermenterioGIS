@@ -94,7 +94,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="vector-map-container"
       onMouseDown={handleMouseDown}
@@ -113,7 +113,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
         userSelect: 'none'
       }}
     >
-      <div 
+      <div
         style={{
           width: '100%',
           height: '100%',
@@ -122,11 +122,11 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
           transition: isDragging ? 'none' : 'transform 0.15s ease-out',
           display: 'flex',
           alignItems: 'center',
-          justify-content: 'center'
+          justifyContent: 'center'
         }}
       >
-        <svg 
-          viewBox="0 0 1000 750" 
+        <svg
+          viewBox="0 0 1000 750"
           style={{ width: '90%', height: '90%', filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.08))' }}
         >
           <defs>
@@ -168,17 +168,17 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
 
           {/* EXACT PANTEÓN LOMAS DE BARRILLAS POLYGON */}
           <g id="cemetery-polygon">
-            <polygon 
-              points="140,65 830,110 790,160 845,180 770,710 300,550 80,360 160,180" 
-              fill="url(#cemeteryPattern)" 
-              stroke="#34d399" 
-              strokeWidth="3" 
+            <polygon
+              points="140,65 830,110 790,160 845,180 770,710 300,550 80,360 160,180"
+              fill="url(#cemeteryPattern)"
+              stroke="#34d399"
+              strokeWidth="3"
               strokeLinejoin="round"
             />
           </g>
 
           {/* MAPPED TOMB POLYGON 1 (Lote 3252 - MIGUEL ANGEL DE LA CRUZ MARTINEZ) */}
-          <g 
+          <g
             id="tumba-3252"
             onClick={(e) => {
               e.stopPropagation();
@@ -186,10 +186,10 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
             }}
             style={{ cursor: 'pointer' }}
           >
-            <polygon 
-              points="420,380 470,380 470,420 420,420" 
-              fill="rgba(122, 28, 46, 0.75)" 
-              stroke="#FACC15" 
+            <polygon
+              points="420,380 470,380 470,420 420,420"
+              fill="rgba(122, 28, 46, 0.75)"
+              stroke="#FACC15"
               strokeWidth="2.5"
             />
             <text x="445" y="405" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
@@ -198,7 +198,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
           </g>
 
           {/* MAPPED TOMB POLYGON 2 (Lote 3254 - FRANCISCA CRUZ AGUILAR) */}
-          <g 
+          <g
             id="tumba-3254"
             onClick={(e) => {
               e.stopPropagation();
@@ -206,10 +206,10 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
             }}
             style={{ cursor: 'pointer' }}
           >
-            <polygon 
-              points="480,380 530,380 530,420 480,420" 
-              fill="rgba(122, 28, 46, 0.75)" 
-              stroke="#FACC15" 
+            <polygon
+              points="480,380 530,380 530,420 480,420"
+              fill="rgba(122, 28, 46, 0.75)"
+              stroke="#FACC15"
               strokeWidth="2.5"
             />
             <text x="505" y="405" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
