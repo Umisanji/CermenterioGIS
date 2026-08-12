@@ -82,6 +82,7 @@ html,
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--coatza-gold-dark);
+  letter-spacing: -0.2px;
 }
 
 .vertical-divider {
@@ -244,11 +245,12 @@ html,
   z-index: 10;
   width: 100%;
   max-width: 100%;
+  margin-right: auto;
   background: rgba(18, 26, 38, 0.45);
   backdrop-filter: blur(6px);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0;
+  border-radius: 0px 0px 0px 0px;
   padding: 44px 64px;
   color: #ffffff;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
@@ -507,7 +509,10 @@ html,
     height: 36px;
   }
 
-  .descanso-text .title,
+  .descanso-text .title {
+    font-size: 0.95rem;
+  }
+
   .descanso-text .subtitle {
     font-size: 0.95rem;
   }

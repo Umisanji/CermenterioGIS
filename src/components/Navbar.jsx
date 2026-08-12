@@ -6,27 +6,26 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
   const [showTramitesDropdown, setShowTramitesDropdown] = useState(false);
 
   const cemeteriesList = [
-    { id: 'barrillas', name: 'Panteón Lomas de Barrillas' },
-    { id: 'san_jose', name: 'Panteón Municipal "San José"' },
-    { id: 'jardin', name: 'Panteón Jardín' },
-    { id: 'allende', name: 'Panteón Allende' },
-    { id: 'mundo_nuevo', name: 'Panteón Mundo Nuevo' }
+    { id: 'barrillas', name: 'Lomas de Barrillas' },
+    { id: 'san_jose', name: 'Antiguo "San José"' },
+    { id: 'jardin', name: 'Jardín' },
+    { id: 'allende', name: 'Allende' },
+    { id: 'mundo_nuevo', name: 'Mundo Nuevo' }
   ];
 
   return (
     <header className="coatza-header">
       <div className="header-top-row">
-        {/* LOGOS BRAND GROUP ON LEFT - CLICKS TO GO HOME */}
-        <div 
+        <div
           className="brand-group"
           onClick={onGoHome}
           style={{ cursor: 'pointer' }}
           title="Regresar a Inicio — Descanso Digno"
         >
           {/* LOGO DESCANSO DIGNO IMAGE */}
-          <img 
-            src="/Logodescansodigno.png" 
-            alt="Logo Descanso Digno" 
+          <img
+            src="/Logodescansodigno.png"
+            alt="Logo Descanso Digno"
             className="descanso-logo-img"
           />
 
@@ -39,18 +38,17 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
           <div className="vertical-divider"></div>
 
           {/* OFFICIAL COATZA GOVT LOGO */}
-          <img 
-            src="/Logo-Coatza-26.png" 
-            alt="Gobierno Coatzacoalcos 2026-2029" 
+          <img
+            src="/Logo-Coatza-26.png"
+            alt="Gobierno Coatzacoalcos 2026-2029"
             className="govt-logo-img"
           />
         </div>
 
-        {/* RIGHT NAVIGATION ITEMS ALIGNED FULL RIGHT */}
         <nav className="nav-menu full-right">
           {/* CEMENTERIOS DROPDOWN */}
           <div className="dropdown-wrapper">
-            <button 
+            <button
               className={`nav-item dropdown-btn ${showCemeteriesDropdown ? 'active' : ''}`}
               onClick={() => {
                 setShowCemeteriesDropdown(!showCemeteriesDropdown);
@@ -63,9 +61,8 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
 
             {showCemeteriesDropdown && (
               <div className="dropdown-menu">
-                <div className="dropdown-header">Selecciona un Cementerio:</div>
                 {cemeteriesList.map((cem) => (
-                  <div 
+                  <div
                     key={cem.id}
                     className="dropdown-item"
                     onClick={() => {
@@ -82,7 +79,7 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
 
           {/* TRAMITES DROPDOWN */}
           <div className="dropdown-wrapper">
-            <button 
+            <button
               className="nav-item dropdown-btn"
               onClick={() => {
                 setShowTramitesDropdown(!showTramitesDropdown);

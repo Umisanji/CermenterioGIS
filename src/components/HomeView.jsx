@@ -20,9 +20,9 @@ export default function HomeView() {
         <div className="hero-content-box full-width-box semi-transparent">
           <h1 className="hero-title">Descanso Digno</h1>
           <p className="hero-description">
-            Bienvenido al portal <strong>Descanso Digno</strong> del Municipio de Coatzacoalcos, Veracruz. Una
+            Bienvenido a <strong>Descanso Digno</strong> del Municipio de Coatzacoalcos, Veracruz. Una
             plataforma digital desarrollada para la gestión catastral inteligente de nuestros cementerios municipales,
-            consulta de lotes georeferenciados con fotogrametría aérea de dron y facilitación de trámites de perpetuidades
+            consulta de lotes georeferenciados con fotogrametría aérea de dron e información de trámites de perpetuidades
             para la ciudadanía.
           </p>
         </div>

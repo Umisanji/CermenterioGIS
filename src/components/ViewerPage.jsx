@@ -1,24 +1,24 @@
 import React, { useState, useRef } from 'react';
-import { Plus, Minus, Maximize2, Layers, Eye } from 'lucide-react';
+import { Plus, Minus, Target, Layers, Eye } from 'lucide-react';
 import OrthoViewer from './OrthoViewer';
-import SimpleMapView from './SimpleMapView';
+import GoogleMapView from './GoogleMapView';
 import TumbaModal from './TumbaModal';
 
 export default function ViewerPage({ onGoHome, selectedCemetery }) {
-  const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'simple' (Plano Vectorial)
+  const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'google' (Google Maps Satellite)
   const [zoomPct, setZoomPct] = useState(100);
   const [selectedTumba, setSelectedTumba] = useState(null);
 
   const orthoViewerRef = useRef(null);
-  const simpleMapRef = useRef(null);
+  const googleMapRef = useRef(null);
 
   // Zoom controls handling
   const handleZoomIn = () => {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.zoomBy(1.3);
       orthoViewerRef.current.viewport.applyConstraints();
-    } else if (mapMode === 'simple' && simpleMapRef.current) {
-      simpleMapRef.current.zoomIn();
+    } else if (mapMode === 'google' && googleMapRef.current) {
+      googleMapRef.current.zoomIn();
     }
   };
 
@@ -26,17 +26,21 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.zoomBy(1 / 1.3);
       orthoViewerRef.current.viewport.applyConstraints();
-    } else if (mapMode === 'simple' && simpleMapRef.current) {
-      simpleMapRef.current.zoomOut();
+    } else if (mapMode === 'google' && googleMapRef.current) {
+      googleMapRef.current.zoomOut();
     }
   };
 
   const handleResetView = () => {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.goHome(true);
-    } else if (mapMode === 'simple' && simpleMapRef.current) {
-      simpleMapRef.current.setView();
+    } else if (mapMode === 'google' && googleMapRef.current) {
+      googleMapRef.current.setView([18.14008, -94.52739], 18);
     }
+  };
+
+  const toggleMapMode = () => {
+    setMapMode((prev) => (prev === 'ortho' ? 'google' : 'ortho'));
   };
 
   return (
@@ -51,9 +55,9 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
             onSelectTumba={(tumba) => setSelectedTumba(tumba)}
           />
         ) : (
-          <SimpleMapView 
+          <GoogleMapView 
             onZoomChange={setZoomPct}
-            setMapRef={(inst) => { simpleMapRef.current = inst; }}
+            setMapRef={(inst) => { googleMapRef.current = inst; }}
             onSelectTumba={(tumba) => setSelectedTumba(tumba)}
           />
         )}
@@ -67,101 +71,124 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
         />
       )}
 
-      {/* FLOATING MAP LAYER SWITCHER TOGGLE (BOTTOM LEFT CORNER) */}
-      <div className="floating-layer-switcher" style={{
-        position: 'absolute',
-        bottom: '24px',
-        left: '24px',
-        zIndex: 1100,
-        display: 'flex',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(0,0,0,0.12)',
-        borderRadius: '30px',
-        padding: '5px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-      }}>
-        <button 
-          className={`layer-toggle-btn ${mapMode === 'ortho' ? 'active' : ''}`}
-          onClick={() => setMapMode('ortho')}
+      {/* FLOATING WHITE CONTROL BUTTONS STACK (BOTTOM RIGHT CORNER) */}
+      <div 
+        className="floating-white-controls-stack"
+        style={{
+          position: 'absolute',
+          bottom: '28px',
+          right: '24px',
+          zIndex: 1200,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px'
+        }}
+      >
+        {/* BUTTON 1: VISTA TOGGLE ICON BUTTON (WHITE ROUNDED SQUARE) */}
+        <button
+          onClick={toggleMapMode}
+          title={mapMode === 'ortho' ? 'Cambiar a Vista Google Maps Satelital' : 'Cambiar a Vista Ortofoto Dron HD'}
           style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            background: '#ffffff',
+            color: '#1e293b',
+            border: '1px solid rgba(0, 0, 0, 0.12)',
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '24px',
-            border: 'none',
-            fontSize: '0.85rem',
-            fontWeight: '700',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            background: mapMode === 'ortho' ? '#7A1C2E' : 'transparent',
-            color: mapMode === 'ortho' ? '#ffffff' : '#475569'
+            justifyContent: 'center',
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+            transition: 'all 0.15s'
           }}
         >
-          <Eye size={16} />
-          <span>Vista Realista (Ortofoto Dron HD)</span>
+          {mapMode === 'ortho' ? (
+            <Layers size={22} color="#1e293b" strokeWidth={2.2} />
+          ) : (
+            <Eye size={22} color="#7A1C2E" strokeWidth={2.2} />
+          )}
         </button>
 
-        <button 
-          className={`layer-toggle-btn ${mapMode === 'simple' ? 'active' : ''}`}
-          onClick={() => setMapMode('simple')}
+        {/* BUTTON 2: CENTRAR TARGET ICON BUTTON (WHITE ROUNDED SQUARE) */}
+        <button
+          onClick={handleResetView}
+          title="Centrar Posición de la Vista"
           style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            background: '#ffffff',
+            color: '#1e293b',
+            border: '1px solid rgba(0, 0, 0, 0.12)',
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '24px',
-            border: 'none',
-            fontSize: '0.85rem',
-            fontWeight: '700',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            background: mapMode === 'simple' ? '#7A1C2E' : 'transparent',
-            color: mapMode === 'simple' ? '#ffffff' : '#475569'
+            justifyContent: 'center',
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+            transition: 'all 0.15s'
           }}
         >
-          <Layers size={16} />
-          <span>Vista Vectorial Simple (Plano)</span>
+          <Target size={22} color="#1e293b" strokeWidth={2.2} />
         </button>
-      </div>
 
-      {/* FLOATING ZOOM AND CENTERING CONTROLS (BOTTOM RIGHT CORNER) */}
-      <div className="floating-controls-corner" style={{
-        position: 'absolute',
-        bottom: '24px',
-        right: '24px',
-        zIndex: 1100,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(0,0,0,0.12)',
-        borderRadius: '16px',
-        padding: '6px 12px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-      }}>
-        {/* ZOOM - / + BUTTONS WITH RESTORED MAP-CTRL-BTN STYLES */}
-        <div className="viewer-zoom-controls" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button className="v-btn-icon map-ctrl-btn" onClick={handleZoomOut} title="Alejar (-)">
-            <Minus size={16} />
+        {/* BUTTON 3: VERTICAL WHITE ZOOM PILL CONTAINER (+ / -) */}
+        <div
+          style={{
+            width: '44px',
+            height: '88px',
+            borderRadius: '22px',
+            background: '#ffffff',
+            border: '1px solid rgba(0, 0, 0, 0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)'
+          }}
+        >
+          {/* ZOOM IN (+) */}
+          <button
+            onClick={handleZoomIn}
+            title="Acercar (+)"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#1e293b',
+              cursor: 'pointer',
+              width: '100%',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Plus size={22} color="#1e293b" strokeWidth={2.5} />
           </button>
-          <span className="v-zoom-text" style={{ fontSize: '0.82rem', fontWeight: '700', minWidth: '70px', textAlign: 'center', color: '#334155' }}>
-            {zoomPct}%
-          </span>
-          <button className="v-btn-icon map-ctrl-btn" onClick={handleZoomIn} title="Acercar (+)">
-            <Plus size={16} />
+
+          {/* DIVIDER */}
+          <div style={{ width: '22px', height: '1px', background: '#cbd5e1' }}></div>
+
+          {/* ZOOM OUT (-) */}
+          <button
+            onClick={handleZoomOut}
+            title="Alejar (-)"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#1e293b',
+              cursor: 'pointer',
+              width: '100%',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Minus size={22} color="#1e293b" strokeWidth={2.5} />
           </button>
         </div>
-
-        <div style={{ width: '1px', height: '24px', background: '#cbd5e1' }}></div>
-
-        {/* CENTRAR VISTA BUTTON WITH RESTORED CENTER-BTN STYLES */}
-        <button className="v-btn-secondary center-btn" onClick={handleResetView} title="Restablecer Encuadre">
-          <Maximize2 size={15} />
-          <span>Centrar Vista</span>
-        </button>
       </div>
 
     </div>
