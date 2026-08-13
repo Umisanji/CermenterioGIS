@@ -17,7 +17,7 @@ export default function HomeView() {
         <div className="hero-bg-overlay"></div>
 
         {/* Barra semitransparente */}
-        <div className="hero-content-box full-width-box semi-transparent">
+        <div className="hero-box">
           <h1 className="hero-title">Descanso Digno</h1>
           <p className="hero-description">
             Bienvenido a <strong>Descanso Digno</strong> del Municipio de Coatzacoalcos, Veracruz. Una

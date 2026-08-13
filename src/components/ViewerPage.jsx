@@ -1,33 +1,83 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Plus, Minus, Target, Layers, Eye } from 'lucide-react';
 import OrthoViewer from './OrthoViewer';
 import GoogleMapView from './GoogleMapView';
-import TumbaModal from './TumbaModal';
+import TumbaDrawer from './TumbaDrawer';
+import MapSearchBar from './MapSearchBar';
 
-export default function ViewerPage({ onGoHome, selectedCemetery }) {
-  const [mapMode, setMapMode] = useState('ortho'); // 'ortho' (Dron HD) | 'google' (Google Maps Satellite)
-  const [zoomPct, setZoomPct] = useState(100);
+const CEMETERIES_DATA = {
+  barrillas: {
+    id: 'barrillas',
+    name: 'Lomas de Barrillas',
+    coords: [18.14008, -94.52739],
+    hasOrtho: true
+  },
+  san_jose: {
+    id: 'san_jose',
+    name: 'Antiguo "San José"',
+    coords: [18.1458, -94.4372],
+    hasOrtho: false
+  },
+  jardin: {
+    id: 'jardin',
+    name: 'Jardín',
+    coords: [18.1432, -94.4678],
+    hasOrtho: false
+  },
+  allende: {
+    id: 'allende',
+    name: 'Allende',
+    coords: [18.1633, -94.3856],
+    hasOrtho: false
+  },
+  mundo_nuevo: {
+    id: 'mundo_nuevo',
+    name: 'Mundo Nuevo',
+    coords: [18.1065, -94.3980],
+    hasOrtho: false
+  }
+};
+
+export default function ViewerPage({ selectedCemetery = 'barrillas' }) {
+  const currentCemetery = CEMETERIES_DATA[selectedCemetery] || CEMETERIES_DATA.barrillas;
+  
+  // If cemetery has orthophoto (Lomas), default to 'ortho', else 'google'
+  const [mapMode, setMapMode] = useState(currentCemetery.hasOrtho ? 'ortho' : 'google');
+  const [, setZoomPct] = useState(100);
   const [selectedTumba, setSelectedTumba] = useState(null);
+  const [matchingLotes, setMatchingLotes] = useState([]);
+  const [geoData, setGeoData] = useState(null);
 
   const orthoViewerRef = useRef(null);
   const googleMapRef = useRef(null);
 
+  // Update mapMode if selectedCemetery changes
+  useEffect(() => {
+    setMapMode(currentCemetery.hasOrtho ? 'ortho' : 'google');
+  }, [selectedCemetery, currentCemetery.hasOrtho]);
+
+  // Load GeoJSON for search bar and drawer matching
+  useEffect(() => {
+    fetch('/tumbas.geojson')
+      .then((res) => res.json())
+      .then((data) => setGeoData(data))
+      .catch((err) => console.error('Error loading geojson in ViewerPage:', err));
+  }, []);
+
   // Zoom controls handling
   const handleZoomIn = () => {
-    if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
-      orthoViewerRef.current.viewport.zoomBy(1.3);
-      orthoViewerRef.current.viewport.applyConstraints();
+    if (mapMode === 'ortho' && orthoViewerRef.current) {
+      if (orthoViewerRef.current.zoomIn) orthoViewerRef.current.zoomIn();
     } else if (mapMode === 'google' && googleMapRef.current) {
-      googleMapRef.current.zoomIn();
+      if (googleMapRef.current.zoomIn) googleMapRef.current.zoomIn();
     }
   };
 
   const handleZoomOut = () => {
-    if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
-      orthoViewerRef.current.viewport.zoomBy(1 / 1.3);
-      orthoViewerRef.current.viewport.applyConstraints();
+    if (mapMode === 'ortho' && orthoViewerRef.current) {
+      if (orthoViewerRef.current.zoomOut) orthoViewerRef.current.zoomOut();
     } else if (mapMode === 'google' && googleMapRef.current) {
-      googleMapRef.current.zoomOut();
+      if (googleMapRef.current.zoomOut) googleMapRef.current.zoomOut();
     }
   };
 
@@ -35,7 +85,15 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
     if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.viewport) {
       orthoViewerRef.current.viewport.goHome(true);
     } else if (mapMode === 'google' && googleMapRef.current) {
-      googleMapRef.current.setView([18.14008, -94.52739], 18);
+      googleMapRef.current.setView(currentCemetery.coords, 18);
+    }
+  };
+
+  const handleCenterMapOnCoords = (coords) => {
+    if (mapMode === 'ortho' && orthoViewerRef.current && orthoViewerRef.current.centerOnCoords) {
+      orthoViewerRef.current.centerOnCoords(coords);
+    } else if (googleMapRef.current && googleMapRef.current.centerOnCoords) {
+      googleMapRef.current.centerOnCoords(coords);
     }
   };
 
@@ -43,149 +101,91 @@ export default function ViewerPage({ onGoHome, selectedCemetery }) {
     setMapMode((prev) => (prev === 'ortho' ? 'google' : 'ortho'));
   };
 
+  const handleSelectTumba = React.useCallback((tumba) => {
+    setSelectedTumba(tumba);
+  }, []);
+
+  const handleSetViewerRef = React.useCallback((inst) => {
+    orthoViewerRef.current = inst;
+  }, []);
+
+  const handleSetGoogleMapRef = React.useCallback((inst) => {
+    googleMapRef.current = inst;
+  }, []);
+
   return (
     <div className="viewer-standalone-page" style={{ position: 'relative', width: '100vw', height: 'calc(100vh - 65px)', overflow: 'hidden' }}>
       
-      {/* MAP CANVAS VIEWPORTS */}
-      <main className="viewer-standalone-canvas" style={{ width: '100%', height: '100%', position: 'relative' }}>
-        {mapMode === 'ortho' ? (
-          <OrthoViewer 
-            onZoomChange={setZoomPct}
-            setViewerRef={(inst) => { orthoViewerRef.current = inst; }}
-            onSelectTumba={(tumba) => setSelectedTumba(tumba)}
-          />
-        ) : (
-          <GoogleMapView 
-            onZoomChange={setZoomPct}
-            setMapRef={(inst) => { googleMapRef.current = inst; }}
-            onSelectTumba={(tumba) => setSelectedTumba(tumba)}
-          />
-        )}
-      </main>
+      {/* TOP RIGHT MAP SEARCH BAR */}
+      <MapSearchBar 
+        geoData={geoData}
+        onSelectTumba={handleSelectTumba}
+        onCenterMap={handleCenterMapOnCoords}
+        onHighlightMatches={(lotes) => setMatchingLotes(lotes)}
+      />
 
-      {/* CADASTRAL DATA MODAL FOR SELECTED TOMB */}
+      {/* LEFT SLIDING DRAWER FOR SELECTED TOMB */}
       {selectedTumba && (
-        <TumbaModal 
+        <TumbaDrawer 
           tumba={selectedTumba} 
           onClose={() => setSelectedTumba(null)} 
         />
       )}
 
-      {/* FLOATING WHITE CONTROL BUTTONS STACK (BOTTOM RIGHT CORNER) */}
-      <div 
-        className="floating-white-controls-stack"
-        style={{
-          position: 'absolute',
-          bottom: '28px',
-          right: '24px',
-          zIndex: 1200,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px'
-        }}
-      >
-        {/* BUTTON 1: VISTA TOGGLE ICON BUTTON (WHITE ROUNDED SQUARE) */}
-        <button
-          onClick={toggleMapMode}
-          title={mapMode === 'ortho' ? 'Cambiar a Vista Google Maps Satelital' : 'Cambiar a Vista Ortofoto Dron HD'}
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
-            background: '#ffffff',
-            color: '#1e293b',
-            border: '1px solid rgba(0, 0, 0, 0.12)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
-            transition: 'all 0.15s'
-          }}
-        >
-          {mapMode === 'ortho' ? (
-            <Layers size={22} color="#1e293b" strokeWidth={2.2} />
-          ) : (
-            <Eye size={22} color="#7A1C2E" strokeWidth={2.2} />
-          )}
-        </button>
+      {/* MAP CANVAS VIEWPORTS */}
+      <main className="viewer-standalone-canvas" style={{ width: '100%', height: '100%', position: 'relative' }}>
+        {mapMode === 'ortho' && currentCemetery.hasOrtho ? (
+          <OrthoViewer 
+            onZoomChange={setZoomPct}
+            setViewerRef={handleSetViewerRef}
+            onSelectTumba={handleSelectTumba}
+            selectedTumba={selectedTumba}
+            matchingLotes={matchingLotes}
+          />
+        ) : (
+          <GoogleMapView 
+            onZoomChange={setZoomPct}
+            setMapRef={handleSetGoogleMapRef}
+            onSelectTumba={handleSelectTumba}
+            selectedTumba={selectedTumba}
+            matchingLotes={matchingLotes}
+          />
+        )}
+      </main>
 
-        {/* BUTTON 2: CENTRAR TARGET ICON BUTTON (WHITE ROUNDED SQUARE) */}
+      {/* FLOATING CONTROL BUTTONS STACK (BOTTOM RIGHT CORNER) */}
+      <div className="floating-white-controls-stack">
+        {/* BUTTON 1: VISTA TOGGLE ICON BUTTON */}
+        {currentCemetery.hasOrtho && (
+          <button
+            onClick={toggleMapMode}
+            title={mapMode === 'ortho' ? 'Cambiar a Vista Satelital Google Maps' : 'Cambiar a Ortofoto Dron HD'}
+            className="ctrl-btn-square"
+          >
+            {mapMode === 'ortho' ? (
+              <Layers size={22} color="#1e293b" strokeWidth={2.2} />
+            ) : (
+              <Eye size={22} color="#7A1C2E" strokeWidth={2.2} />
+            )}
+          </button>
+        )}
+
+        {/* BUTTON 2: CENTRAR TARGET ICON BUTTON */}
         <button
           onClick={handleResetView}
           title="Centrar Posición de la Vista"
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '12px',
-            background: '#ffffff',
-            color: '#1e293b',
-            border: '1px solid rgba(0, 0, 0, 0.12)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
-            transition: 'all 0.15s'
-          }}
+          className="ctrl-btn-square"
         >
           <Target size={22} color="#1e293b" strokeWidth={2.2} />
         </button>
 
-        {/* BUTTON 3: VERTICAL WHITE ZOOM PILL CONTAINER (+ / -) */}
-        <div
-          style={{
-            width: '44px',
-            height: '88px',
-            borderRadius: '22px',
-            background: '#ffffff',
-            border: '1px solid rgba(0, 0, 0, 0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)'
-          }}
-        >
-          {/* ZOOM IN (+) */}
-          <button
-            onClick={handleZoomIn}
-            title="Acercar (+)"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#1e293b',
-              cursor: 'pointer',
-              width: '100%',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+        {/* BUTTON 3: VERTICAL ZOOM PILL CONTAINER (+ / -) */}
+        <div className="zoom-pill-container">
+          <button onClick={handleZoomIn} title="Acercar (+)" className="zoom-sub-btn">
             <Plus size={22} color="#1e293b" strokeWidth={2.5} />
           </button>
-
-          {/* DIVIDER */}
-          <div style={{ width: '22px', height: '1px', background: '#cbd5e1' }}></div>
-
-          {/* ZOOM OUT (-) */}
-          <button
-            onClick={handleZoomOut}
-            title="Alejar (-)"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#1e293b',
-              cursor: 'pointer',
-              width: '100%',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <div className="zoom-divider"></div>
+          <button onClick={handleZoomOut} title="Alejar (-)" className="zoom-sub-btn">
             <Minus size={22} color="#1e293b" strokeWidth={2.5} />
           </button>
         </div>

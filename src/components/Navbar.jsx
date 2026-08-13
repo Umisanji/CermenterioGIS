@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { ChevronDown, User } from 'lucide-react';
+import { TRAMITES_PANTEONES } from '../data/tramitesData';
 
-export default function Navbar({ onSelectCemetery, onGoHome }) {
+export default function Navbar({ onSelectCemetery, onGoHome, onSelectTramite }) {
   const [showCemeteriesDropdown, setShowCemeteriesDropdown] = useState(false);
   const [showTramitesDropdown, setShowTramitesDropdown] = useState(false);
 
   const cemeteriesList = [
-    { id: 'barrillas', name: 'Lomas de Barrillas' },
-    { id: 'san_jose', name: 'Antiguo "San José"' },
-    { id: 'jardin', name: 'Jardín' },
-    { id: 'allende', name: 'Allende' },
-    { id: 'mundo_nuevo', name: 'Mundo Nuevo' }
+    { id: 'barrillas', name: 'Lomas de Barrillas', active: true },
+    { id: 'san_jose', name: 'Antiguo "San José"', active: false },
+    { id: 'jardin', name: 'Jardín', active: false },
+    { id: 'allende', name: 'Allende', active: false },
+    { id: 'mundo_nuevo', name: 'Mundo Nuevo', active: false }
   ];
 
   return (
@@ -64,13 +65,26 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
                 {cemeteriesList.map((cem) => (
                   <div
                     key={cem.id}
-                    className="dropdown-item"
+                    className={`dropdown-item ${!cem.active ? 'disabled-item' : ''}`}
                     onClick={() => {
+                      if (!cem.active) return;
                       onSelectCemetery(cem.id);
                       setShowCemeteriesDropdown(false);
                     }}
+                    style={{
+                      opacity: cem.active ? 1 : 0.45,
+                      cursor: cem.active ? 'pointer' : 'not-allowed',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
                   >
                     <span>{cem.name}</span>
+                    {!cem.active && (
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontStyle: 'italic', marginLeft: '12px' }}>
+                        (Próximamente)
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -80,7 +94,7 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
           {/* TRAMITES DROPDOWN */}
           <div className="dropdown-wrapper">
             <button
-              className="nav-item dropdown-btn"
+              className={`nav-item dropdown-btn ${showTramitesDropdown ? 'active' : ''}`}
               onClick={() => {
                 setShowTramitesDropdown(!showTramitesDropdown);
                 setShowCemeteriesDropdown(false);
@@ -91,11 +105,23 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
             </button>
 
             {showTramitesDropdown && (
-              <div className="dropdown-menu">
-                <div className="dropdown-item">Consulta de Perpetuidad</div>
-                <div className="dropdown-item">Refrendo de Derechos</div>
-                <div className="dropdown-item">Registro de Inhumación</div>
-                <div className="dropdown-item">Regularización de Titular</div>
+              <div className="dropdown-menu tramites-dropdown">
+                {TRAMITES_PANTEONES.map((tramite) => (
+                  <div
+                    key={tramite.id}
+                    className="dropdown-item tramite-dropdown-item"
+                    onClick={() => {
+                      if (onSelectTramite) {
+                        onSelectTramite(tramite.id);
+                      }
+                      setShowTramitesDropdown(false);
+                    }}
+                  >
+                    <div className="tramite-item-info">
+                      <span className="tramite-item-title">{tramite.title}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -118,3 +144,4 @@ export default function Navbar({ onSelectCemetery, onGoHome }) {
     </header>
   );
 }
+
