@@ -2,25 +2,30 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import HomeView from './components/HomeView';
 import ViewerPage from './components/ViewerPage';
-import TramiteDetailView from './components/TramiteDetailView';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'viewer' | 'tramite'
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'viewer'
   const [selectedCemetery, setSelectedCemetery] = useState('barrillas');
-  const [selectedTramiteId, setSelectedTramiteId] = useState('sepelio-primera-vez');
+
+  // User Session State: null by default
+  const [userSession, setUserSession] = useState(null);
 
   const handleSelectCemetery = (cemeteryId) => {
     setSelectedCemetery(cemeteryId);
     setCurrentView('viewer');
   };
 
-  const handleSelectTramite = (tramiteId) => {
-    setSelectedTramiteId(tramiteId);
-    setCurrentView('tramite');
-  };
-
   const handleGoHome = () => {
     setCurrentView('home');
+  };
+
+  // Keep the user on their CURRENT view when logging in!
+  const handleLogin = (session) => {
+    setUserSession(session);
+  };
+
+  const handleLogout = () => {
+    setUserSession(null);
   };
 
   return (
@@ -28,8 +33,10 @@ export default function App() {
       {/* OFFICIAL COATZA NAVBAR HEADER ALWAYS VISIBLE ON TOP */}
       <Navbar 
         onSelectCemetery={handleSelectCemetery} 
-        onSelectTramite={handleSelectTramite}
         onGoHome={handleGoHome}
+        userSession={userSession}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
       />
 
       {currentView === 'home' && (
@@ -40,14 +47,7 @@ export default function App() {
         <ViewerPage 
           onGoHome={handleGoHome}
           selectedCemetery={selectedCemetery}
-        />
-      )}
-
-      {currentView === 'tramite' && (
-        <TramiteDetailView 
-          selectedTramiteId={selectedTramiteId}
-          onSelectTramite={handleSelectTramite}
-          onGoHome={handleGoHome}
+          userRole={userSession ? userSession.role : 'public'}
         />
       )}
     </div>

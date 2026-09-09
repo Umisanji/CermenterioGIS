@@ -221,7 +221,7 @@ export default function SimpleMapView({ onZoomChange, setMapRef, onSelectTumba }
           <g transform="translate(475, 345)" style={{ cursor: 'pointer' }} onClick={() => onSelectTumba && onSelectTumba(tumba1)}>
             <rect x="-110" y="-16" width="220" height="32" rx="16" fill="#7A1C2E" stroke="#FACC15" strokeWidth="2" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.2))" />
             <text x="0" y="5" fill="#ffffff" fontSize="12" fontWeight="800" textAnchor="middle">
-              🪦 2 Tumbas Mapeadas (QGIS)
+              Tumbas Mapeadas (QGIS)
             </text>
           </g>
 

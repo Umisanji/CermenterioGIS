@@ -2,40 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-function getFeatureCentroid(geometry) {
-  if (!geometry) return null;
-  if (geometry.type === 'Point') {
-    return [geometry.coordinates[1], geometry.coordinates[0]];
-  } else if (geometry.type === 'Polygon') {
-    const ring = geometry.coordinates[0];
-    let latSum = 0, lngSum = 0;
-    ring.forEach((pt) => {
-      lngSum += pt[0];
-      latSum += pt[1];
-    });
-    return [latSum / ring.length, lngSum / ring.length];
-  }
-  return null;
-}
-
-export default function OrthoViewer({
-  onZoomChange,
-  setViewerRef,
-  onSelectTumba,
-  selectedTumba,
-  matchingLotes = []
-}) {
+export default function OrthoViewer({ onZoomChange, setViewerRef, onSelectTumba, selectedTumba, matchingLotes = [] }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const geoJsonLayerRef = useRef(null);
-  const markerGroupRef = useRef(null);
-  const hasFittedRef = useRef(false);
   const onSelectTumbaRef = useRef(onSelectTumba);
   const selectedTumbaRef = useRef(selectedTumba);
   const matchingLotesRef = useRef(matchingLotes);
+
   const [geoData, setGeoData] = useState(null);
 
-  // Keep refs updated to avoid re-creating layers on prop changes
+  // Keep latest references for event callbacks
   useEffect(() => {
     onSelectTumbaRef.current = onSelectTumba;
   }, [onSelectTumba]);
@@ -55,17 +32,16 @@ export default function OrthoViewer({
       .then((data) => {
         setGeoData(data);
       })
-      .catch((err) => console.error('Error loading tumbas.geojson:', err));
+      .catch((err) => console.error('Error loading tumbas.geojson in OrthoViewer:', err));
   }, []);
 
-  // Initialize Leaflet Map (Runs ONLY ONCE)
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    // EXACT 1:1 GEOMETRIC EXTENT DERIVED DIRECTLY FROM QGIS RASTER METADATA:
-    const southWest = [18.138659354301275, -94.52949563352669];
-    const northEast = [18.140585169744774, -94.52696508877698];
+    // EXACT 1:1 GEOMETRIC EXTENT OF NEW CROPPED ORTHOPHOTO (ortofotoRecortada.tif):
+    const southWest = [18.138987579402276, -94.52916665203209];
+    const northEast = [18.140381004844773, -94.52720318897669];
     const exactQgisImageBounds = [southWest, northEast];
 
     const centerCoords = [
@@ -73,40 +49,40 @@ export default function OrthoViewer({
       (southWest[1] + northEast[1]) / 2
     ];
 
+    // Initialize Leaflet Map with GPU Canvas Renderer
     const map = L.map(mapContainerRef.current, {
+      preferCanvas: true,
+      renderer: L.canvas({ tolerance: 4 }),
       center: centerCoords,
-      zoom: 19,
+      zoom: 18.5,
       minZoom: 15,
-      maxZoom: 22,
+      maxZoom: 26,
+      zoomSnap: 0.25,
       zoomControl: false,
-      attributionControl: false,
-      scrollWheelZoom: true,
-      doubleClickZoom: true,
-      touchZoom: true
+      attributionControl: false
     });
 
-    // High-Resolution Aerial Orthophoto Image Layer
-    const orthophotoLayer = L.imageOverlay('/ortho_seccion_a_web.jpg', exactQgisImageBounds, {
+    // High-Resolution Aerial Orthophoto Image Layer (High-Efficiency 14MB WebP GPU Texture)
+    const orthophotoLayer = L.imageOverlay('/ortho_seccion_a_web_opt.webp', exactQgisImageBounds, {
       opacity: 1.0,
-      interactive: true
+      interactive: false,
+      maxNativeZoom: 22,
+      maxZoom: 26,
+      className: 'gpu-ortho-layer'
     });
     orthophotoLayer.addTo(map);
-
-    // Layer group for selected pins
-    const markerGroup = L.layerGroup().addTo(map);
-    markerGroupRef.current = markerGroup;
 
     mapInstanceRef.current = map;
     if (setViewerRef) {
       setViewerRef({
-        zoomIn: () => map.zoomIn(),
-        zoomOut: () => map.zoomOut(),
-        centerOnCoords: (coords) => map.setView(coords, 21),
+        zoomIn: () => map.zoomIn(1),
+        zoomOut: () => map.zoomOut(1),
+        centerOnCoords: (coords) => map.setView(coords, 23),
         viewport: {
-          goHome: () => map.setView(centerCoords, 19),
+          goHome: () => map.setView(centerCoords, 18.5),
           zoomBy: (factor) => {
-            if (factor > 1) map.zoomIn();
-            else map.zoomOut();
+            if (factor > 1) map.zoomIn(1);
+            else map.zoomOut(1);
           },
           applyConstraints: () => { }
         }
@@ -116,7 +92,7 @@ export default function OrthoViewer({
     // Zoom listener
     map.on('zoomend', () => {
       const zoom = map.getZoom();
-      const pct = Math.round((zoom / 19) * 100);
+      const pct = Math.round((zoom / 18.5) * 100);
       if (onZoomChange) onZoomChange(pct);
     });
 
@@ -126,7 +102,7 @@ export default function OrthoViewer({
     };
   }, []); // Run ONCE on mount!
 
-  // Render GeoJSON polygons (Runs ONLY when geoData loads)
+  // Render QGIS GeoJSON Polygons over the cropped Orthophoto (GPU CANVAS RENDERER)
   useEffect(() => {
     if (!mapInstanceRef.current || !geoData) return;
 
@@ -138,44 +114,99 @@ export default function OrthoViewer({
 
     const geoJsonLayer = L.geoJSON(geoData, {
       style: () => ({
-        color: '#FACC15',       // Gold Border
-        weight: 3.5,
-        fillColor: '#7A1C2E',   // Coatzacoalcos Maroon Fill
-        fillOpacity: 0.75
+        color: '#FACC15',
+        weight: 1.8,
+        fillColor: '#FACC15',
+        fillOpacity: 0.05
       }),
       onEachFeature: (feature, layer) => {
         const props = feature.properties || {};
+        const loteVal = props.lote || props.identificador || props.LOTE || props.Lote || props.fid || '';
 
         layer.bindTooltip(`
           <div style="font-family: sans-serif; padding: 4px 8px; line-height: 1.3;">
-            <strong style="color: #7A1C2E; font-size: 0.88rem;">Lote #${props.lote || ''} (Sec. ${props.seccion || 'A'})</strong><br/>
-            <span style="font-size: 0.8rem; color: #334155; font-weight: 600;">🪦 ${props.difunto || 'Registro Fosa'}</span>
+            <strong style="color: #7A1C2E; font-size: 0.88rem;">Lote #${loteVal}</strong>
           </div>
         `, { sticky: true, direction: 'top' });
 
         layer.on({
           mouseover: (e) => {
             const l = e.target;
-            l.setStyle({
-              weight: 5,
-              color: '#ffffff',
-              fillOpacity: 0.95
-            });
+            const featProps = feature.properties || {};
+            const loteStr = String(featProps.lote || featProps.identificador || featProps.LOTE || featProps.Lote || '');
+            const fidStr = String(featProps.fid || '');
+
+            const selectedProps = selectedTumbaRef.current?.properties || {};
+            const selectedLoteStr = String(selectedProps.lote || '');
+            const selectedFidStr = String(selectedProps.fid || '');
+
+            const isSelected =
+              (selectedFidStr && fidStr === selectedFidStr) ||
+              (selectedLoteStr && loteStr === selectedLoteStr);
+
+            const isMatch = matchingLotesRef.current.includes(loteStr) || matchingLotesRef.current.includes(fidStr);
+
+            if (isSelected) {
+              l.setStyle({
+                color: '#1E3A8A',
+                weight: 4.5,
+                fillColor: '#2563EB',
+                fillOpacity: 0.25
+              });
+            } else if (isMatch) {
+              l.setStyle({
+                color: '#00E5FF',
+                weight: 4.0,
+                fillColor: '#00E5FF',
+                fillOpacity: 0.2
+              });
+            } else {
+              l.setStyle({
+                color: '#FDE047',
+                weight: 3.0,
+                fillColor: '#FDE047',
+                fillOpacity: 0.15
+              });
+            }
           },
           mouseout: (e) => {
             const l = e.target;
-            const loteStr = String(feature.properties?.lote || '');
-            const selectedLoteStr = String(selectedTumbaRef.current?.properties?.lote || '');
-            if (selectedLoteStr && loteStr === selectedLoteStr) {
-              l.setStyle({ color: '#EF4444', weight: 6.5, fillColor: '#DC2626', fillOpacity: 0.95 });
-            } else if (matchingLotesRef.current.includes(loteStr)) {
-              l.setStyle({ color: '#38BDF8', weight: 5, fillColor: '#0284C7', fillOpacity: 0.9 });
+            const featProps = feature.properties || {};
+            const loteStr = String(featProps.lote || '');
+            const fidStr = String(featProps.fid || '');
+
+            const selectedProps = selectedTumbaRef.current?.properties || {};
+            const selectedLoteStr = String(selectedProps.lote || '');
+            const selectedFidStr = String(selectedProps.fid || '');
+
+            const isSelected =
+              (selectedFidStr && fidStr === selectedFidStr) ||
+              (selectedLoteStr && loteStr === selectedLoteStr);
+
+            const isMatch = matchingLotesRef.current.includes(loteStr) || matchingLotesRef.current.includes(fidStr);
+
+            if (isSelected) {
+              l.setStyle({
+                color: '#2563EB',
+                weight: 3.8,
+                fillColor: '#2563EB',
+                fillOpacity: 0.18
+              });
+            } else if (isMatch) {
+              l.setStyle({
+                color: '#00E5FF',
+                weight: 3.2,
+                fillColor: '#00E5FF',
+                fillOpacity: 0.15
+              });
             } else {
               geoJsonLayer.resetStyle(l);
             }
           },
           click: (e) => {
-            L.DomEvent.stopPropagation(e);
+            if (e && e.originalEvent) {
+              L.DomEvent.stopPropagation(e.originalEvent);
+            }
             if (onSelectTumbaRef.current) {
               onSelectTumbaRef.current(feature);
             }
@@ -185,93 +216,56 @@ export default function OrthoViewer({
     });
 
     geoJsonLayer.addTo(map);
+    geoJsonLayer.bringToFront();
     geoJsonLayerRef.current = geoJsonLayer;
 
-    // ONLY FIT BOUNDS ONCE ON INITIAL LOAD
-    if (!hasFittedRef.current) {
-      try {
-        const bounds = geoJsonLayer.getBounds();
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [120, 120], maxZoom: 21 });
-          hasFittedRef.current = true;
-        }
-      } catch (err) {
-        console.warn('Could not fit bounds:', err);
-      }
-    }
+    return () => {
+      map.removeLayer(geoJsonLayer);
+    };
   }, [geoData]);
 
-  // Dynamically update polygon highlights and target pin when selectedTumba or matchingLotes changes
+  // Dynamically update polygon highlights when selectedTumba or matchingLotes changes
   useEffect(() => {
     if (!geoJsonLayerRef.current) return;
 
     const selectedLoteStr = selectedTumba?.properties?.lote ? String(selectedTumba.properties.lote) : null;
-    const selectedFolioStr = selectedTumba?.properties?.folio ? String(selectedTumba.properties.folio) : null;
+    const selectedFidStr = selectedTumba?.properties?.fid !== undefined ? String(selectedTumba.properties.fid) : null;
 
     geoJsonLayerRef.current.eachLayer((layer) => {
       const featProps = layer.feature?.properties || {};
       const loteStr = String(featProps.lote || '');
-      const folioStr = String(featProps.folio || '');
+      const fidStr = String(featProps.fid || '');
 
       const isSelected =
-        (selectedLoteStr && loteStr === selectedLoteStr) ||
-        (selectedFolioStr && folioStr === selectedFolioStr);
+        (selectedFidStr && fidStr === selectedFidStr) ||
+        (selectedLoteStr && loteStr === selectedLoteStr);
 
-      const isMatch = matchingLotes.includes(loteStr) || matchingLotes.includes(folioStr);
+      const isMatch = matchingLotes.includes(loteStr) || matchingLotes.includes(fidStr);
 
       if (isSelected) {
         layer.setStyle({
-          color: '#EF4444',       // Vibrant Red Border
-          weight: 6.5,
-          fillColor: '#DC2626',   // Vibrant Red Fill
-          fillOpacity: 0.95
+          color: '#2563EB',
+          weight: 3.8,
+          fillColor: '#2563EB',
+          fillOpacity: 0.18
         });
         layer.bringToFront();
       } else if (isMatch) {
         layer.setStyle({
-          color: '#38BDF8',       // Electric Cyan Border
-          weight: 5,
-          fillColor: '#0284C7',   // Cyan Fill
-          fillOpacity: 0.88
+          color: '#00E5FF',
+          weight: 3.2,
+          fillColor: '#00E5FF',
+          fillOpacity: 0.15
         });
-        layer.bringToFront();
       } else {
         layer.setStyle({
-          color: '#FACC15',       // Standard Gold Border
-          weight: 3.5,
-          fillColor: '#7A1C2E',   // Standard Maroon Fill
-          fillOpacity: 0.75
+          color: '#FACC15',
+          weight: 1.8,
+          fillColor: '#FACC15',
+          fillOpacity: 0.05
         });
       }
     });
-
-    // Update target pin marker
-    if (markerGroupRef.current) {
-      markerGroupRef.current.clearLayers();
-
-      if (selectedTumba && selectedTumba.geometry) {
-        const centroid = getFeatureCentroid(selectedTumba.geometry);
-        if (centroid) {
-          const props = selectedTumba.properties || {};
-          const pinHtml = `
-            <div className="target-pin-container">
-              <div className="target-pin-pulse"></div>
-              <div className="target-pin-badge">
-              </div>
-            </div>
-          `;
-          const customIcon = L.divIcon({
-            className: 'custom-target-icon-wrapper',
-            html: pinHtml,
-            iconSize: [140, 44],
-            iconAnchor: [70, 44]
-          });
-
-          const pinMarker = L.marker(centroid, { icon: customIcon });
-          pinMarker.addTo(markerGroupRef.current);
-        }
-      }
-    }
   }, [selectedTumba, matchingLotes]);
 
   return (

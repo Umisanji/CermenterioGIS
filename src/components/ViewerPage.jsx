@@ -38,7 +38,7 @@ const CEMETERIES_DATA = {
   }
 };
 
-export default function ViewerPage({ selectedCemetery = 'barrillas' }) {
+export default function ViewerPage({ selectedCemetery = 'barrillas', userRole = 'admin' }) {
   const currentCemetery = CEMETERIES_DATA[selectedCemetery] || CEMETERIES_DATA.barrillas;
   
   // If cemetery has orthophoto (Lomas), default to 'ortho', else 'google'
@@ -113,6 +113,10 @@ export default function ViewerPage({ selectedCemetery = 'barrillas' }) {
     googleMapRef.current = inst;
   }, []);
 
+  const handleHighlightMatches = React.useCallback((lotes) => {
+    setMatchingLotes(lotes);
+  }, []);
+
   return (
     <div className="viewer-standalone-page" style={{ position: 'relative', width: '100vw', height: 'calc(100vh - 65px)', overflow: 'hidden' }}>
       
@@ -121,14 +125,18 @@ export default function ViewerPage({ selectedCemetery = 'barrillas' }) {
         geoData={geoData}
         onSelectTumba={handleSelectTumba}
         onCenterMap={handleCenterMapOnCoords}
-        onHighlightMatches={(lotes) => setMatchingLotes(lotes)}
+        onHighlightMatches={handleHighlightMatches}
       />
 
       {/* LEFT SLIDING DRAWER FOR SELECTED TOMB */}
       {selectedTumba && (
         <TumbaDrawer 
           tumba={selectedTumba} 
-          onClose={() => setSelectedTumba(null)} 
+          userRole={userRole}
+          onClose={() => setSelectedTumba(null)}
+          onTumbaUpdated={() => {
+            setSelectedTumba({ ...selectedTumba });
+          }}
         />
       )}
 

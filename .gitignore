@@ -17,8 +17,11 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
+
+# Temporary scratch & test captures
+scratch/
+public/*_verification*.png
+public/search_verification_screenshot.png
+public/filter_overlap_fixed.png
+public/unified_filter_below_fixed.png

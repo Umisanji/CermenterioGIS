@@ -73,7 +73,7 @@ export default function TumbaModal({ tumba, onClose }) {
               borderRadius: '12px',
               textTransform: 'uppercase'
             }}>
-              Ficha Catastral de Fosa
+              Ficha Lote
             </span>
             <span style={{ fontSize: '0.8rem', opacity: 0.85 }}>
               Sección {props.seccion || 'A'} — Lote #{props.lote}
