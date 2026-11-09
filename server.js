@@ -23,6 +23,12 @@ if (!fs.existsSync(uploadsDir)) {
 // Serve uploaded photos directly via Express
 app.use('/uploads', express.static(uploadsDir));
 
+// Serve compiled Vite frontend static files (production container mode)
+const distDir = path.join(process.cwd(), 'dist');
+if (fs.existsSync(distDir)) {
+  app.use(express.static(distDir));
+}
+
 // Configure Multer storage for high-speed direct binary photo streaming
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -634,6 +640,18 @@ app.get('/api/status', async (req, res) => {
   } catch (err) {
     res.status(500).json({ connected: false, error: err.message });
   }
+});
+
+// SPA Fallback: Serve index.html for any route not matched by API endpoints
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    return next();
+  }
+  const indexPath = path.join(distDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  res.status(404).send('Not Found');
 });
 
 app.listen(PORT, () => {
