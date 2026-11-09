@@ -8,7 +8,7 @@ import multer from 'multer';
 const { Pool } = pg;
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -39,13 +39,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, limits: { fileSize: 30 * 1024 * 1024 } });
 
-// Connect to PostgreSQL 18 local database created from cementerios_v1.sql
+// Connect to PostgreSQL database (Supports Docker/Podman env variables with local defaults)
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'cementerios_db',
-  password: 'admin123',
-  port: 5432,
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'cementerios_db',
+  password: process.env.DB_PASSWORD || 'admin123',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
 });
 
 pool.connect((err, client, release) => {
