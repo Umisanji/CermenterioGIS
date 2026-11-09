@@ -642,16 +642,16 @@ app.get('/api/status', async (req, res) => {
   }
 });
 
-// SPA Fallback: Serve index.html for any route not matched by API endpoints
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+// SPA Fallback: Serve index.html for any route not matched by API endpoints (Express 5 compatible)
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
     return next();
   }
   const indexPath = path.join(distDir, 'index.html');
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
   }
-  res.status(404).send('Not Found');
+  next();
 });
 
 app.listen(PORT, () => {
