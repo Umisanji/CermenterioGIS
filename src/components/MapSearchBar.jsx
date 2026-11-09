@@ -48,7 +48,7 @@ export default function MapSearchBar({ geoData, onSelectTumba, onCenterMap, onHi
       endDate: endDate
     });
 
-    fetch(`http://localhost:3001/api/tumbas-search?${queryParams.toString()}`)
+    fetch(`/api/tumbas-search?${queryParams.toString()}`)
       .then((res) => {
         if (!res.ok) throw new Error('Error al buscar en BD');
         return res.json();

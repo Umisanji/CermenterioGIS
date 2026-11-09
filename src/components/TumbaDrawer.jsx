@@ -31,7 +31,7 @@ export default function TumbaDrawer({ tumba, onClose, userRole = 'admin', onTumb
     const loteId = initialProps.lote || initialProps.identificador;
     if (!loteId) return;
 
-    fetch(`http://localhost:3001/api/tumbas/${loteId}?role=${userRole}`)
+    fetch(`/api/tumbas/${loteId}?role=${userRole}`)
       .then((res) => {
         if (!res.ok) throw new Error('No en BD');
         return res.json();
@@ -77,7 +77,7 @@ export default function TumbaDrawer({ tumba, onClose, userRole = 'admin', onTumb
   const resolvePhotoUrl = (url) => {
     if (!url) return null;
     if (url.startsWith('/uploads/')) {
-      return `http://localhost:3001${url}`;
+      return `${url}`;
     }
     return url;
   };
@@ -143,7 +143,7 @@ export default function TumbaDrawer({ tumba, onClose, userRole = 'admin', onTumb
       numero_nivel: idx + 1
     }));
 
-    fetch(`http://localhost:3001/api/tumbas/${loteId}/reorder-niveles`, {
+    fetch(`/api/tumbas/${loteId}/reorder-niveles`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ niveles: reorderedNivelesPayload })
@@ -169,7 +169,7 @@ export default function TumbaDrawer({ tumba, onClose, userRole = 'admin', onTumb
     const confirmDelete = window.confirm(`¿Estás seguro de eliminar a "${d.nombre}" del Lote #${loteId}?`);
     if (!confirmDelete) return;
 
-    fetch(`http://localhost:3001/api/tumbas/${loteId}/difuntos/${d.difunto_id}`, {
+    fetch(`/api/tumbas/${loteId}/difuntos/${d.difunto_id}`, {
       method: 'DELETE'
     })
       .then((res) => {
@@ -193,7 +193,7 @@ export default function TumbaDrawer({ tumba, onClose, userRole = 'admin', onTumb
     const confirmDelete = window.confirm('¿Deseas eliminar esta fotografía?');
     if (!confirmDelete) return;
 
-    fetch(`http://localhost:3001/api/fotos/${fotoId}`, { method: 'DELETE' })
+    fetch(`/api/fotos/${fotoId}`, { method: 'DELETE' })
       .then((res) => res.json())
       .then(() => {
         if (selectedPhotoZoom?.foto_id === fotoId) setSelectedPhotoZoom(null);

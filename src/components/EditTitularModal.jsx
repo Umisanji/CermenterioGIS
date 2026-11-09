@@ -20,7 +20,7 @@ export default function EditTitularModal({ tumba, onClose, onSaveSuccess }) {
     setSaving(true);
     setErrorMsg('');
 
-    fetch(`http://localhost:3001/api/tumbas/${loteId}/titular`, {
+    fetch(`/api/tumbas/${loteId}/titular`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

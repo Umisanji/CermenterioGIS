@@ -33,7 +33,7 @@ export default function EditDifuntoModal({ difunto, lote, onClose, onSaveSuccess
     setSaving(true);
     setErrorMsg('');
 
-    fetch(`http://localhost:3001/api/difuntos/${difunto.difunto_id}`, {
+    fetch(`/api/difuntos/${difunto.difunto_id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

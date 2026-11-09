@@ -26,7 +26,7 @@ export default function AddDifuntoModal({ tumba, onClose, onSaveSuccess }) {
     setSaving(true);
     setErrorMsg('');
 
-    fetch(`http://localhost:3001/api/tumbas/${loteId}/difuntos`, {
+    fetch(`/api/tumbas/${loteId}/difuntos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

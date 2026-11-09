@@ -49,13 +49,13 @@ export default function AddPhotoModal({ lote, onClose, onPhotoAdded }) {
       const formData = new FormData();
       formData.append('foto', selectedFile);
 
-      requestPromise = fetch(`http://localhost:3001/api/tumbas/${lote}/fotos`, {
+      requestPromise = fetch(`/api/tumbas/${lote}/fotos`, {
         method: 'POST',
         body: formData
       });
     } else {
       // 2. Send JSON payload for web URL
-      requestPromise = fetch(`http://localhost:3001/api/tumbas/${lote}/fotos`, {
+      requestPromise = fetch(`/api/tumbas/${lote}/fotos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fotoUrl: photoUrl.trim() })
